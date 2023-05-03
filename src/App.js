@@ -27,7 +27,7 @@ import 'swiper/css/navigation';
 import { EffectCoverflow, Pagination, Navigation } from 'swiper';
 
 
-const API_KEY = "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";
+const API_KEY = "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";
 // "Explain things like you would to a 10 year old learning how to code."
 const systemMessage = { //  Explain things like you're talking to a software professional with 5 years of experience.
     "role": "system", "content": "Explain things like you're talking to a software professional with 2 years of experience."
@@ -36,7 +36,6 @@ const systemMessage = { //  Explain things like you're talking to a software pro
 
 
 const App = () => {
-
     function Submit(e) {
         const formEle = document.querySelector("form");
         const formDatab = new FormData(formEle);
