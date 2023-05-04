@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
+import { Link, animateScroll as scroll } from "react-scroll";
+import { Element } from 'react-scroll';
+import { withTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import "../src/styles/style.css"
 import background from "./image/background.png"
@@ -18,7 +22,7 @@ import icon2 from "./image/icon_2.png"
 import icon3 from "./image/icon_3.png"
 import chatBotButton from "./image/chatbot.png"
 import { Swiper, SwiperSlide } from 'swiper/react';
-
+import './18n';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
@@ -36,6 +40,42 @@ const systemMessage = { //  Explain things like you're talking to a software pro
 
 
 const App = () => {
+
+
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 0) {
+                setScrolled(true);
+            } else {
+                setScrolled(false);
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+
+    const buttonRef = useRef(null);
+
+    useEffect(() => {
+        buttonRef.current.click();
+    }, []);
+
+    const changeLang = (lang) => {
+        // Your code to change the language
+        console.log(`Language changed to ${lang}`);
+    };
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (language) => {
+
+        i18n.changeLanguage(language);
+    };
+    function refreshPage() {
+        window.location.reload(false);
+    }
     function Submit(e) {
         const formEle = document.querySelector("form");
         const formDatab = new FormData(formEle);
@@ -53,11 +93,16 @@ const App = () => {
             .catch((error) => {
                 console.log(error);
             });
+
+
+
     }
+
+
     const [messages, setMessages] = useState([
         {
-            message: "Сәлем,мен осы платформаның жасанды интелектісі боламын!",
-            sentTime: "қазір",
+            message: "Hello,i am GPT Assistant",
+            sentTime: "now",
             sender: "ChatGPT"
         }
     ]);
@@ -132,22 +177,52 @@ const App = () => {
             <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&family=Oswald:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
             <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-element-bundle.min.js"></script>
-            <header style={{ backgroundImage: `url(${background})` }}>
-                <nav>
-                    <div className="container_nav">
-                        <div className="links">
-                            <img className="logo" src={logo} alt="" />
-                            <a className="link" href="#">Басты бет</a>
-                            <a className="link" href="#">Турлар</a>
-                            <a className="link" href="#">Өтініш</a>
-                        </div>
-                        <div className="language-switcher">ҚҚ</div>
-                    </div>
-                </nav>
+            <header id="section1" style={{ backgroundImage: `url(${background})` }}>
+            <nav className={scrolled ? 'scrolled' : ''}>
+      <div className="container_nav">
+        <div className="links">
+          <img onClick={refreshPage} className="logo" src={logo} alt="" />
+          <a className="link" onClick={refreshPage}>
+            <Link
+              activeClass="active"
+              to="section1"
+              spy={true}
+              smooth={true}
+              offset={-70}
+              duration={500}
+            >{t('Main-page')} </Link>
+          </a>
+          <a className="link">
+            <Link
+              activeClass="active"
+              to="section2"
+              spy={true}
+              smooth={true}
+              offset={-70}
+              duration={500}
+            >{t('Tours')} </Link>
+          </a>
+          <a className="link">
+            <Link
+              activeClass="active"
+              to="section3"
+              spy={true}
+              smooth={true}
+              offset={-70}
+              duration={500}
+            > {t('Question')}</Link>
+          </a>
+        </div>
+        <div className="language-switcher">
+          <div id="default_lang" className="language" onClick={() => changeLanguage("kz")} ref={buttonRef}>Kz</div>
+          <div className="language" onClick={() => changeLanguage("ru")}>Ru</div>
+        </div>
+      </div>
+    </nav>
                 <div className="container_header">
                     <div className="header_main">
                         <h1>GPT tour</h1>
-                        <h2>сұрақ қойып, өз турыңды тап!</h2>
+                        <h2>{t('header_slogan')}</h2>
                         <div className="social_media">
                             <img src={whatsapp} alt="" />
                             <img src={viber} alt="" />
@@ -158,28 +233,27 @@ const App = () => {
             </header>
             <div className="infoBlock">
                 <div className="container">
-                    <h1 className="title">Неге біз?</h1>
+                    <h1 className="title">{t('why')}</h1>
                     <div className="advantages_block">
                         <div className="advantages">
                             <img id="alter_block" src={icon1} alt="" />
-                            <h2>Кез-келген сұрағыңызға жауап, кеңес, және тур туралы ақпаратты GPT чатботтан (24/7) біле аласыз
+                            <h2>{t('advantage-1')}
                             </h2>
                         </div>
                         <div className="advantages">
                             <img src={icon2} alt="" />
-                            <h2> Жүйелі технологиямен сапалы әрі тез төлем жаса да, бізбен бірге саяхатта (онлайн төлем,
-                                бөліп-төлеу)</h2>
+                            <h2> {t('advantage-2')}</h2>
                         </div>
                         <div className="advantages">
                             <img src={icon3} alt="" />
-                            <h2>Виртуалды турмен саяхатыңды алдын-ала жоспарлау арқылы уақытыңызды үнемдеңіз</h2>
+                            <h2>{t('advantage-3')}</h2>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="slider">
+            <div className="slider" id="section2">
                 <div className="container">
-                    <h1 className="title">ТУРЛАР</h1>
+                    <h1 className="title">{t("Tours")}</h1>
                     <Swiper
                         slidesPerView={3}
                         spaceBetween={30}
@@ -191,56 +265,56 @@ const App = () => {
                         loop={true}
                     >
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card1})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Спорт тур</h1>
-                            <h2 className="slider_card_subtext">Велосипед, шаңғы, йога секілді табиғатпен байланысты спорт турлеріне тур</h2>
+                            <h1 className="slider_card_text">{t("tour-1-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-1-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card2})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Көрнекті жерлер</h1>
-                            <h2 className="slider_card_subtext">Әр қаланың тарихи және мәдени мұра ретінде қалдырылған жерлер</h2>
+                            <h1 className="slider_card_text">{t("tour-2-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-2-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card3})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Круиз/яхта</h1>
-                            <h2 className="slider_card_subtext">Ашық теңіз, мұхитта кемені көлік құралы ретінде пайдаланатын топтық экскурсия</h2>
+                            <h1 className="slider_card_text">{t("tour-3-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-3-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card4})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Жеке тур</h1>
-                            <h2 className="slider_card_subtext">Әр қаланы жеке, менеджермен байланыса отырып өз бақылауыңызда болады</h2>
+                            <h1 className="slider_card_text">{t("tour-4-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-4-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card5})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Виртуалды тур</h1>
-                            <h2 className="slider_card_subtext">Шынайы турмен танысып, шынайы эмоцияға бөленіңіз</h2>
+                            <h1 className="slider_card_text">{t("tour-5-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-5-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card1})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Көрнекті жерлер</h1>
-                            <h2 className="slider_card_subtext">Әр қаланың тарихи және мәдени мұра ретінде қалдырылған жерлер</h2>
+                            <h1 className="slider_card_text">{t("tour-1-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-1-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card2})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Көрнекті жерлер</h1>
-                            <h2 className="slider_card_subtext">Әр қаланың тарихи және мәдени мұра ретінде қалдырылған жерлер</h2>
+                            <h1 className="slider_card_text">{t("tour-2-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-2-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card3})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Көрнекті жерлер</h1>
-                            <h2 className="slider_card_subtext">Әр қаланың тарихи және мәдени мұра ретінде қалдырылған жерлер</h2>
+                            <h1 className="slider_card_text">{t("tour-3-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-3-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card4})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Көрнекті жерлер</h1>
-                            <h2 className="slider_card_subtext">Әр қаланың тарихи және мәдени мұра ретінде қалдырылған жерлер</h2>
+                            <h1 className="slider_card_text">{t("tour-4-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-4-desc")}</h2>
                         </SwiperSlide>
                         <SwiperSlide className="swiper-slider" style={{ backgroundImage: `url(${card5})`, display: "flex" }}>
-                            <h1 className="slider_card_text">Көрнекті жерлер</h1>
-                            <h2 className="slider_card_subtext">Әр қаланың тарихи және мәдени мұра ретінде қалдырылған жерлер</h2>
+                            <h1 className="slider_card_text">{t("tour-5-title")}</h1>
+                            <h2 className="slider_card_subtext">{t("tour-5-desc")}</h2>
                         </SwiperSlide>
 
                     </Swiper>
                 </div>
             </div>
-            <div className="form_panel">
+            <div className="form_panel" id="section3">
                 <div className="container">
-                    <h1 className="title">Сауалнама</h1>
+                    <h1 className="title">{t("form")}</h1>
                     <form className="form" onSubmit={(e) => Submit(e)}>
-                        <input className="form_panel_input" placeholder="Your Name" name="Name" type="text" />
-                        <input className="form_panel_input" placeholder="Your Message" name="Number" type="text" />
-                        <input className="form_panel_button" value="Жіберу" name="Name" type="submit" />
+                        <input id="form_input" className="form_panel_input" placeholder={t("form-input-name")} name="Name" type="text" />
+                        <input if="form_input" className="form_panel_input" placeholder={t("form-input-number")} name="Number" type="text" />
+                        <input className="form_panel_button" value={t("send")} name="Name" type="submit" />
                     </form>
                 </div>
             </div>
@@ -250,9 +324,9 @@ const App = () => {
                     <div className="footer_content">
                         <h1 className="title">GPT tour</h1>
                         <div className="footer_links">
-                            <a href="#" className="footer_link">Басты бет</a>
-                            <a href="#" className="footer_link">Турлар</a>
-                            <a href="#" className="footer_link">Өтініш</a>
+                            <a href="#" className="footer_link">{t('Main-page')}</a>
+                            <a href="#" className="footer_link">{t('Tours')}</a>
+                            <a href="#" className="footer_link">{t('Question')}</a>
                         </div>
                         <div className="social_media">
                             <img src={whatsapp} alt="" />
@@ -288,6 +362,7 @@ const App = () => {
             </div>
         </div>
     )
+
 }
 
-export default App
+export default withTranslation()(App)
